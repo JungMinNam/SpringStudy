@@ -1,4 +1,4 @@
-package org.zerock.controller;
+/* package org.zerock.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,4 +22,4 @@ public class CommonExceptionAdvice {
 		return modelAndView;
 	}
 	
-}
+} */

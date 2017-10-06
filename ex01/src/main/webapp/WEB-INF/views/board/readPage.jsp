@@ -34,6 +34,40 @@
 	<button type="submit" class="btn btn-primary">LIST ALL</button>
 </div>
 
+<div class="row">
+	<div class="col-md-12">
+		<div class="box box-success">
+			<div class="box-header">
+				<h3 class="box-title">ADD NEW REPLY</h3>
+			</div>
+			<div class="box-body">
+				<label for="exampleInputEmail1">Writer</label>
+				<input class="form-control" type="text" placeholder="USER ID" id="newReplyWriter">
+				<label for="exampleInputEmail1">Reply Text</label>
+				<input class="form-control" type="text" placeholder="REPLY TEXT" id="newReplyText">
+			</div>
+			<!-- /.box body -->
+			<div class="box-footer">
+				<button type="submit" class="btn btn-primary" id="replyAddBtn">ADD REPLY</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- The time line -->
+<ul class="timeline">
+	<!-- timeline time label -->
+	<li class="time-label" id="repliesDiv">
+		<span class="bg-green">Replies List</span>
+	</li>
+</ul>
+
+<div class="text-center">
+	<ul id="pagination" class="pagination pagination-sm no-margin">
+	
+	</ul>
+</div>
+
 <%@include file="../include/footer.jsp" %>
 
 <script>
@@ -61,4 +95,45 @@ $(document).ready(function(){
 	});
 	
 });
+</script>
+
+<script id="template" type="text/x-handlebars-template">
+{{#each .}}
+<li class="replyLi" data-rno={{rno}}>
+	<i class="fa fa-comments bg-blue"></i>
+	<div class="timeline-item">
+		<span class="time">
+			<i class="fa fa-clock-o"></i>{{prettifyDate regdate}}
+		</span>
+		<h3 class="timeline-header"><strong>{{rno}}</strong> -{{replyer}}</h3>
+		<div class="timeline-body">{{replytext}} </div>
+			<div class="timeline-footer">
+				<a class="btn btn-primary btn-xs"
+					data-toggle="modal" data-target="modifyModal">Modify</a>
+			</div>
+	</div>
+</li>
+{{/each}}
+</script>
+
+<script>
+
+Handlebars.registerHelper("prettifyDate", function(timeValue) {
+	var dateObj = new Date(timeValue);
+	var year = dateObj.getFullYear();
+	var month = dateObj.getMonth() + 1;
+	var date = dateObj.getDate();
+	return year+"/"+month+"/"+date;
+});
+
+var PrintData = function (replyArr, target, templateObject) {
+	
+	var template = Handlebars.compile(templateObject.html());
+	
+	var html = template(replyArr);
+	$(".replyLi").remove();
+	target.after(html);
+	
+}
+
 </script>
