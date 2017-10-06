@@ -55,7 +55,7 @@
 	<script src="/resources/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 
 	<script>
-	var bno = 917482;
+	var bno = 3060;
 	var replyPage = 1;
 	
 	getPageList(1);

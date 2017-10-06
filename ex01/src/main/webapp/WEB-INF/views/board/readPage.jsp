@@ -136,4 +136,54 @@ var PrintData = function (replyArr, target, templateObject) {
 	
 }
 
+var bno = ${boardVO.bno};
+var replyPage = 1;
+
+function getPage(pageInfo) {
+	
+	$.getJSON(pageInfo, function(data) {
+		printData(data.list, $("#repliesDiv"), $("#template"));
+		printPaging(data.pageMaker, $(".pagination"));
+	});
+}
+
+var printPaging = function(pageMaker, target) {
+	
+	var str = "";
+	
+	if(pageMaker.prev) {
+		str += "<li><a href='"+(pageMaker.startPage-1)+"'> << </a></li>";
+	}
+	
+	for(var i=pageMaker.startPage, len = pageMaker.endPage; i <= len; i++) {
+		var strClass = pageMaker.cri.page == i?'class=active':'';
+		str += "<li " +strClass+"><a hrefi='"+i+"'>"+i+"</a></li>";
+	}
+	
+	if(pageMaker.next) {
+		str += "<li><a href='"+(pageMaker.endPage + 1)+"'> >> </a></li>";
+	}
+	
+	target.html(str);
+};
+
+$("#repliesDiv").on("click", function() {
+	
+	if($(".timeline li").size() > 1) {
+		return;
+	}
+	getPage("/replies/" + bno + "/1");
+	
+});
+
+$(".pagination").on("click", "li a", function(event) {
+	
+	event.preventDefault();
+	
+	replyPage = $(this).attr("href");
+	
+	getPage("/replies/"+bno+"/"+replyPage);
+	
+});
+
 </script>
