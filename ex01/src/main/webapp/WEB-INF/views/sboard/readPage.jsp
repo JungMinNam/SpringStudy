@@ -31,7 +31,7 @@
 <div class="box-footer">
 	<button type="submit" class="btn btn-warning" id="boardModBtn">MODIFY</button>
 	<button type="submit" class="btn btn-danger" id="boardDelBtn">REMOVE</button>
-	<button type="submit" class="btn btn-primary">LIST ALL</button>
+	<button type="submit" class="btn btn-primary" id="boardListBtn">LIST ALL</button>
 </div>
 
 <div class="row">
@@ -109,7 +109,7 @@ $(document).ready(function(){
 		formObj.submit();
 	});
 	
-	$(".btn-primary").on("click", function() {
+	$("#boardListBtn").on("click", function() {
 		formObj.attr("method", "get");
 		formObj.attr("action", "/sboard/list");
 		formObj.submit();
@@ -161,10 +161,12 @@ var bno = ${boardVO.bno};
 var replyPage = 1;
 
 function getPage(pageInfo) {
-	
+	console.log(pageInfo);
 	$.getJSON(pageInfo, function(data) {
 		printData(data.list, $("#repliesDiv"), $("#template"));
 		printPaging(data.pageMaker, $(".pagination"));
+		
+		$("#modifyModal").modal('hide');
 	});
 }
 
@@ -269,8 +271,7 @@ $("#replyModBtn").on("click", function() {
 			console.log("result: " + result);
 			if(result == "SUCCESS") {
 				alert("수정 되었습니다.");
-				getPage("/replies/"+bno+"/"+replyPage);
-				$("#modifyModal").modal();
+				getPage("/replies/"+bno+"/"+replyPage); 
 			}
 		}
 	});
@@ -294,7 +295,6 @@ $("#replyDelBtn").on("click", function() {
 			if(result == "SUCCESS") {
 				alert("삭제 되었습니다.");
 				getPage("/replies/"+bno+"/"+replyPage);
-				$("#modifyModal").modal();
 			}
 		}
 	});
