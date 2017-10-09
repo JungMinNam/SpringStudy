@@ -6,6 +6,13 @@
 
 <%@include file="../include/header.jsp" %>
 
+<style type="text/css">
+	.popup {position: absolute;}
+	.back {background-color: gray; opacity: 0.5; width: 100%; height: 300%; overflow: hidden; z-index:1101;}
+	.front {z-index: 1110; opacity: 1; border: 1px; margin: auto;}
+	.show {position: relative; max-width: 1200px; max-height: 800px; overflow: auto;}
+</style>
+
 <form role="form" action="modifyPage" method="post">
 	<input type='hidden' name="bno" value="${boardVO.bno}">
 	<input type='hidden' name="page" value="${cri.page}">
@@ -68,6 +75,11 @@
 	<ul id="pagination" class="pagination pagination-sm no-margin">
 	
 	</ul>
+</div>
+
+<div class="popup back" style="display:none;"></div>
+<div id="popup_front" class="popup front" style="display:none;">
+	<img id="popup_img">
 </div>
 
 <!-- Modal -->
@@ -303,4 +315,56 @@ $("#replyDelBtn").on("click", function() {
 	});
 });
 
+</script>
+
+<script>
+var bno = ${boardVO.bno};
+var template = Handlebars.compile($("#templateAttach").html());
+
+$.getJSON("/sboard/getAttach/"+bno, function(list) {
+	$(list).each(function() {
+		
+		var fileInfo = getFileInfo(this);
+		
+		var html = template(fileInfo);
+		
+		$(".uploadedList").append(html);
+		
+	});
+});
+
+$(".uploadedList").on("click", ".mailbox-attachment-ifno a", function(event) {
+	
+	var fileLink = $(this).attr("href");
+	
+	if(checkImageType(fileLink)) {
+		
+		event.preventDefault();
+		
+		var imgTag = $("#popup_img");
+		imgTag.attr("src", fileLink);
+		
+		console.log(imgTag.attr("src"));
+		
+		$(".popup").show("slow");
+		imgTag.addClass("show");
+	}
+});
+
+$("#popup_img").on("click", function() {
+	
+	$(".popup").hide("slow");
+
+});
+
+</script>
+
+<script id="templateAttach" type="text/x-handlebars-template">
+<li data-src='{[fullName}}'>
+	<span class="mailbox-attachment-icon has-img"><img src="{{imgsrc}}" alt="Attachment"></span>
+	<div class="mailbox-attachment-info">
+	<a href="{{getLink}}" class="mailbox-attachment-name">{{fileName}}</a>
+	</span>
+	</div>
+</li>
 </script>
