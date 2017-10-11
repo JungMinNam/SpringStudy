@@ -2,7 +2,6 @@
   pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page session="false" %>
 
 <%@include file="../include/header.jsp" %>
 
@@ -40,13 +39,15 @@
 </div>
 <!-- /.box-body -->
 
+<ul class="mailbox-attachments clearfix uploadedList"></ul>
+
 <div class="box-footer">
+<c:if test="${login.uid == boardVO.writer}">
 	<button type="submit" class="btn btn-warning" id="boardModBtn">MODIFY</button>
 	<button type="submit" class="btn btn-danger" id="boardDelBtn">REMOVE</button>
+</c:if>
 	<button type="submit" class="btn btn-primary" id="boardListBtn">LIST ALL</button>
 </div>
-
-<ul class="mailbox-attachments clearfix uploadedList"></ul>
 
 <div class="row">
 	<div class="col-md-12">
@@ -54,16 +55,23 @@
 			<div class="box-header">
 				<h3 class="box-title">ADD NEW REPLY</h3>
 			</div>
-			<div class="box-body">
-				<label for="exampleInputEmail1">Writer</label>
-				<input class="form-control" type="text" placeholder="USER ID" id="newReplyWriter">
-				<label for="exampleInputEmail1">Reply Text</label>
-				<input class="form-control" type="text" placeholder="REPLY TEXT" id="newReplyText">
-			</div>
-			<!-- /.box body -->
-			<div class="box-footer">
-				<button type="submit" class="btn btn-primary" id="replyAddBtn">ADD REPLY</button>
-			</div>
+			<c:if test="${not empty login}">
+				<div class="box-body">
+					<label for="exampleInputEmail1">Writer</label>
+					<input class="form-control" type="text" placeholder="USER ID" id="newReplyWriter" value="${login.uid}" readonly>
+					<label for="exampleInputEmail1">Reply Text</label>
+					<input class="form-control" type="text" placeholder="REPLY TEXT" id="newReplyText">
+				</div>
+				<!-- /.box body -->
+				<div class="box-footer">
+					<button type="submit" class="btn btn-primary" id="replyAddBtn">ADD REPLY</button>
+				</div>
+			</c:if>
+			<c:if test="${empty login}">
+				<div class="box-body">
+					<div><a href="javascript:goLogin();">Login Please</a></div>
+				</div>
+			</c:if>
 		</div>
 	</div>
 </div>
@@ -168,6 +176,14 @@ $(document).ready(function(){
 	});
 	
 });
+
+Handlebars.registerHelper("eqReplyer", function(replyer, block) {
+	var accum = '';
+	if(replyer == "${login.uid}") {
+		accum += block.fn();
+	}
+	return accum;
+});
 </script>
 
 <script id="template" type="text/x-handlebars-template">
@@ -181,8 +197,10 @@ $(document).ready(function(){
 		<h3 class="timeline-header"><strong>{{rno}}</strong> -{{replyer}}</h3>
 		<div class="timeline-body">{{replytext}} </div>
 			<div class="timeline-footer">
+			{{#eqReplyer replyer}}
 				<a class="btn btn-primary btn-xs"
 					data-toggle="modal" data-target="#modifyModal">Modify</a>
+			{{/eqReplyer}}
 			</div>
 	</div>
 </li>

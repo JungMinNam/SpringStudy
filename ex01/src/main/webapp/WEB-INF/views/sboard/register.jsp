@@ -1,5 +1,4 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" 
   pageEncoding="UTF-8"%>
 
@@ -21,7 +20,7 @@
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Writer</label>
-			<input type="text" name="writer" class="form-control" placeholder="Enter Writer">
+			<input type="text" name="writer" class="form-control" value="${login.uid}" readonly>
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">File DROP Here</label>
@@ -103,8 +102,6 @@ $("#registerForm").submit(function(event) {
 	$(".uploadedList .delbtn").each(function(index) {
 		str += "<input type='hidden' name='files["+index+"]' value='"+$(this).attr("href") +"'> ";
 	});
-	
-	alert(str);
 	
 	that.append(str);
 	

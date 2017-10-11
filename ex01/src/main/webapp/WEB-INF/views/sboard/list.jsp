@@ -123,6 +123,12 @@ $(document).ready(function() {
 			+ "&keyword=" + $("#keywordInput").val();
 			
 	});
+	
+	$('#newBtn').on("click", function(evt) {
+
+		self.location = "register";
+
+	});
 });
 	
 </script>
