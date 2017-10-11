@@ -13,6 +13,11 @@
 	.show {position: relative; max-width: 1200px; max-height: 800px; overflow: auto;}
 </style>
 
+<div class="popup back" style="display:none;"></div>
+<div id="popup_front" class="popup front" style="display:none;">
+	<img id="popup_img">
+</div>
+
 <form role="form" action="modifyPage" method="post">
 	<input type='hidden' name="bno" value="${boardVO.bno}">
 	<input type='hidden' name="page" value="${cri.page}">
@@ -41,6 +46,8 @@
 	<button type="submit" class="btn btn-primary" id="boardListBtn">LIST ALL</button>
 </div>
 
+<ul class="mailbox-attachments clearfix uploadedList"></ul>
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="box box-success">
@@ -66,7 +73,7 @@
 	<!-- timeline time label -->
 	<li class="time-label" id="repliesDiv">
 		<span class="bg-green">
-		Replies List <small id="replycntSmall"> [ ${boardVO.replycnt} ]</small>
+		Replies List <small id="replycntSmall"> [ ${boardVO.replycnt} ] </small>
 		</span>
 	</li>
 </ul>
@@ -75,11 +82,6 @@
 	<ul id="pagination" class="pagination pagination-sm no-margin">
 	
 	</ul>
-</div>
-
-<div class="popup back" style="display:none;"></div>
-<div id="popup_front" class="popup front" style="display:none;">
-	<img id="popup_img">
 </div>
 
 <!-- Modal -->
@@ -105,6 +107,8 @@
 
 <%@include file="../include/footer.jsp" %>
 
+<script type="text/javascript" src="/resources/js/upload.js"></script>
+
 <script>
 $(document).ready(function(){
 	
@@ -119,6 +123,25 @@ $(document).ready(function(){
 	});
 	
 	$("#boardDelBtn").on("click", function() {
+		
+		var replyCnt = $("#replycntSmall").html();
+		
+		if(replyCnt > 0) {
+			alert("댓글이 달린 게시물을 삭제할 수 없습니다.");
+			return;
+		}
+		
+		var arr = [];
+		$(".uploadedList li").each(function(index) {
+			arr.push($(this).attr("data-src"));
+		});
+		
+		if(arr.length > 0) {
+			$.post("/deleteAllFiles", {files:arr}, function() {
+				
+			});
+		}
+		
 		formObj.attr("action", "/sboard/removePage");
 		formObj.submit();
 	});
@@ -127,6 +150,21 @@ $(document).ready(function(){
 		formObj.attr("method", "get");
 		formObj.attr("action", "/sboard/list");
 		formObj.submit();
+	});
+	
+	var bno = ${boardVO.bno};
+	var template = Handlebars.compile($("#templateAttach").html());
+
+	$.getJSON("/sboard/getAttach/"+bno, function(list) {
+		$(list).each(function() {
+			
+			var fileInfo = getFileInfo(this);
+			
+			var html = template(fileInfo);
+			
+			$(".uploadedList").append(html);
+			
+		});
 	});
 	
 });
@@ -318,22 +356,7 @@ $("#replyDelBtn").on("click", function() {
 </script>
 
 <script>
-var bno = ${boardVO.bno};
-var template = Handlebars.compile($("#templateAttach").html());
-
-$.getJSON("/sboard/getAttach/"+bno, function(list) {
-	$(list).each(function() {
-		
-		var fileInfo = getFileInfo(this);
-		
-		var html = template(fileInfo);
-		
-		$(".uploadedList").append(html);
-		
-	});
-});
-
-$(".uploadedList").on("click", ".mailbox-attachment-ifno a", function(event) {
+$(".uploadedList").on("click", ".mailbox-attachment-info a", function(event) {
 	
 	var fileLink = $(this).attr("href");
 	
@@ -358,9 +381,9 @@ $("#popup_img").on("click", function() {
 });
 
 </script>
-
+	
 <script id="templateAttach" type="text/x-handlebars-template">
-<li data-src='{[fullName}}'>
+<li data-src='{{fullName}}'>
 	<span class="mailbox-attachment-icon has-img"><img src="{{imgsrc}}" alt="Attachment"></span>
 	<div class="mailbox-attachment-info">
 	<a href="{{getLink}}" class="mailbox-attachment-name">{{fileName}}</a>

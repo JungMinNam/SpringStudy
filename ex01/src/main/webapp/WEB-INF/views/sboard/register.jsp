@@ -9,7 +9,7 @@
 .fileDrop {background-color: blue; height:100px; width:100%;}
 </style>
 
-<form role="form" method="post">
+<form id="registerForm" role="form" method="post">
 	<div class="box-body">
 		<div class="form-group">
 			<label for="exampleInputEmail1">Title</label>
@@ -103,6 +103,8 @@ $("#registerForm").submit(function(event) {
 	$(".uploadedList .delbtn").each(function(index) {
 		str += "<input type='hidden' name='files["+index+"]' value='"+$(this).attr("href") +"'> ";
 	});
+	
+	alert(str);
 	
 	that.append(str);
 	
